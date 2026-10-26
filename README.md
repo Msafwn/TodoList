@@ -6,6 +6,7 @@ A simple React + Vite todo application with Redux Toolkit state management and l
 
 - Add new todos with a clean UI
 - Edit existing todos inline
+- Mark todos complete and reopen them
 - Delete todos instantly
 - Persist todo state across browser refreshes using `localStorage`
 - Responsive layout with Tailwind CSS-style classes

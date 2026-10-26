@@ -1,4 +1,4 @@
-import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { createSelector, createSlice, nanoid } from "@reduxjs/toolkit";
 
 const loadTodos = () => {
   if (typeof window === 'undefined') return [{ id: nanoid(), text: "Hello, World!" }];
@@ -23,7 +23,8 @@ export const todoSlice = createSlice({
     addTodo: (state, action) => {
         const todo = { 
             id: nanoid(), 
-            text: action.payload
+            text: action.payload,
+            completed: false,
         }
       state.todos.push(todo);
     },
@@ -34,6 +35,12 @@ export const todoSlice = createSlice({
         todo.text = text;
       }
     },
+    toggleTodo: (state, action) => {
+      const todo = state.todos.find((todo) => todo.id === action.payload);
+      if (todo) {
+        todo.completed = !todo.completed;
+      }
+    },
     removeTodo: (state, action) => {
 
       state.todos = state.todos.filter((todo) => todo.id !== action.payload);
@@ -41,5 +48,14 @@ export const todoSlice = createSlice({
   },
 });
 
-export const { addTodo, removeTodo, updateTodo } = todoSlice.actions;
+export const { addTodo, removeTodo, toggleTodo, updateTodo } = todoSlice.actions;
+
+export const selectTodoSummary = createSelector(
+  [(state) => state.todo.todos],
+  (todos) => ({
+    todos,
+    completedCount: todos.filter((todo) => todo.completed).length,
+  })
+);
+
 export default todoSlice.reducer;

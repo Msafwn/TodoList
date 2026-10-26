@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { removeTodo, updateTodo } from '../features/TodoSlice'
+import { removeTodo, selectTodoSummary, toggleTodo, updateTodo } from '../features/TodoSlice'
 
 function Todo() {
   const dispatch = useDispatch()
-  const todos = useSelector((state) => state.todo.todos)
+  const { todos, completedCount } = useSelector(selectTodoSummary)
   const [editingId, setEditingId] = useState(null)
   const [editText, setEditText] = useState("")
 
@@ -33,7 +33,7 @@ function Todo() {
           <h2 className="text-2xl font-semibold text-white">Your todos</h2>
         </div>
         <div className="rounded-full bg-slate-950 px-4 py-2 text-sm text-slate-300 shadow-inner shadow-slate-950/20">
-          {todos.length} item{todos.length === 1 ? '' : 's'}
+          {todos.length} item{todos.length === 1 ? '' : 's'} · {completedCount} completed
         </div>
       </div>
 
@@ -57,7 +57,11 @@ function Todo() {
                     onChange={(e) => setEditText(e.target.value)}
                   />
                 ) : (
-                  <div className="text-slate-100 text-base sm:text-lg">{todo.text}</div>
+                  <div
+                    className={`text-base sm:text-lg ${todo.completed ? 'text-slate-500 line-through' : 'text-slate-100'}`}
+                  >
+                    {todo.text}
+                  </div>
                 )}
 
                 <div className="flex flex-wrap gap-2 justify-start sm:justify-end">
@@ -80,6 +84,18 @@ function Todo() {
                     </>
                   ) : (
                     <>
+                      <button
+                        type="button"
+                        onClick={() => dispatch(toggleTodo(todo.id))}
+                        aria-pressed={Boolean(todo.completed)}
+                        className={`rounded-full px-4 py-2 text-sm font-medium text-white transition focus:outline-none focus:ring-2 ${
+                          todo.completed
+                            ? 'bg-slate-700 hover:bg-slate-600 focus:ring-slate-500'
+                            : 'bg-emerald-500 hover:bg-emerald-600 focus:ring-emerald-400'
+                        }`}
+                      >
+                        {todo.completed ? 'Reopen' : 'Complete'}
+                      </button>
                       <button
                         type="button"
                         onClick={() => startEdit(todo)}
